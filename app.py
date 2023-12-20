@@ -1,41 +1,41 @@
 from flask import Flask, request, jsonify
+import sqlite3
 
 app = Flask(__name__)
 
-books_list = [
-    {"id": 1, "author": "Haruki Murakami", "language": "English", "title": "Norwegian Wood"},
-    {"id": 2, "author": "Jane Austen", "language": "English", "title": "Pride and Prejudice"},
-    {"id": 3, "author": "Gabriel García Márquez", "language": "Spanish", "title": "One Hundred Years of Solitude"},
-    {"id": 4, "author": "Fyodor Dostoevsky", "language": "Russian", "title": "Crime and Punishment"},
-    {"id": 5, "author": "J.K. Rowling", "language": "English", "title": "Harry Potter and the Sorcerer's Stone"},
-    {"id": 6, "author": "Kazuo Ishiguro", "language": "English", "title": "Never Let Me Go"},
-    {"id": 7, "author": "George Orwell", "language": "English", "title": "1984"},
-    {"id": 8, "author": "Leo Tolstoy", "language": "Russian", "title": "War and Peace"},
-    {"id": 9, "author": "Ernest Hemingway", "language": "English", "title": "The Old Man and the Sea"},
-    {"id": 10, "author": "Toni Morrison", "language": "English", "title": "Beloved"}
-]
 
+def db_connection():
+    conn = None
+    try:
+        conn = sqlite3.connect('books.sqlite')
+    except sqlite3.Error as e:
+        print(e)
+    return conn
 
 @app.route('/books', methods=['GET', 'POST'])
 def books():
+    conn = db_connection()
+    cursor = conn.cursor()
     if request.method == 'GET':
-        if len(books_list) > 0:
-            return jsonify(books_list)
-        else:
-            'Nothing Found', 404
+        cursor = conn.execute("SELECT * FROM book")
+        books = [
+            dict(id=row[0], author=row[1], language=row[2], title=row[3])
+            for row in cursor.fetchall()
+        ]
+        if books is not None:
+            return jsonify(books)
+
     if request.method == 'POST':
         new_author = request.form['author']
         new_language = request.form['language']
         new_title = request.form['title']
-        id = books_list[-1]['id'] + 1
-        new_obj = {
-            'id': id,
-            'author': new_author,
-            'language': new_language,
-            'title': new_title
-        }
-        books_list.append(new_obj)
-        return jsonify(books_list), 201
+
+        sql = """INSERT INTO book (author, language, title)
+            VALUES (?,?,?)
+        """
+        cursor = cursor.execute(sql, (new_author, new_language, new_title))
+        conn.commit()
+        return f"Book with the id: {cursor.lastrowid} created successfully"
 
 @app.route('/book/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def single_book(id):
