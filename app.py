@@ -26,7 +26,7 @@ def books():
     if request.method == 'GET':
         cursor = conn.execute("SELECT * FROM book")
         books = [
-            dict(id=row[0], author=row[1], language=row[2], title=row[3])
+            dict(id=row['id'], author=row['author'], language=row['language'], title=row['title'])
             for row in cursor.fetchall()
         ]
         if books is not None:
@@ -37,7 +37,7 @@ def books():
         new_language = request.form['language']
         new_title = request.form['title']
 
-        sql = """INSERT INTO book (author, language, title) VALUES (?,?,?)"""
+        sql = """INSERT INTO book (author, language, title) VALUES (%s,%s,%s)"""
         cursor = cursor.execute(sql, (new_author, new_language, new_title))
         conn.commit()
         return f"Book with the id: {cursor.lastrowid} created successfully"
