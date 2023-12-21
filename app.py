@@ -60,7 +60,7 @@ def single_book(id):
         else:
             return "Something wrong", 404
     if request.method == 'PUT':
-        sql = """UPDATE  book SET title=?,author=?,language=? where id=?"""
+        sql = """UPDATE  book SET title=%s,author=%s,language=%s where id=%s"""
         author = request.form['author']
         language = request.form['language']
         title = request.form['title']
@@ -70,11 +70,11 @@ def single_book(id):
             'language': language,
             'title': title  
         }
-        conn.execute(sql, (author, language, title, id))
+        cursor.execute(sql, (author, language, title, id))
         conn.commit()
         return jsonify(updated_book)
     if request.method == 'DELETE':
-        sql = """DELETE FROM book WHERE id=?"""
+        sql = """DELETE FROM book WHERE id=%s"""
         conn.execute(sql, (id, ))
         conn.commit()
         return "The book with id: {} has been deleted.".format(id), 200
