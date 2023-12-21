@@ -1,6 +1,13 @@
-import sqlite3
+import pymysql
 
-conn = sqlite3.connect('books.sqlite')
+conn = pymysql.connect(
+    host='sql12.freesqldatabase.com',
+    user='sql12671900',
+    password='PHXcBpVhjL',
+    database='sql12671900',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
 
 
 cursor = conn.cursor()
@@ -14,3 +21,4 @@ sql_querry = """ CREATE TABLE book(
 """
 
 cursor.execute(sql_querry)
+conn.close()
