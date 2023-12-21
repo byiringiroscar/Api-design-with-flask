@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import sqlite3
+import pymysql
 
 app = Flask(__name__)
 
@@ -7,8 +7,15 @@ app = Flask(__name__)
 def db_connection():
     conn = None
     try:
-        conn = sqlite3.connect('books.sqlite')
-    except sqlite3.Error as e:
+        conn = pymysql.connect(
+            host='sql12.freesqldatabase.com',
+            user='sql12671900',
+            password='PHXcBpVhjL',
+            database='sql12671900',
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+    except pymysql.Error as e:
         print(e)
     return conn
 
