@@ -51,7 +51,7 @@ def single_book(id):
     cursor = conn.cursor()
     book = None
     if request.method == 'GET':
-        cursor.execute("SELECT * FROM book WHERE id=?", (id,))
+        cursor.execute("SELECT * FROM book WHERE id=%s", (id,))
         rows = cursor.fetchall()
         for r in rows:
             book = r
