@@ -13,7 +13,7 @@ conn = pymysql.connect(
 cursor = conn.cursor()
 
 sql_querry = """ CREATE TABLE book(
-    id INTEGER PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     author TEXT NOT NULL,
     language TEXT NOT NULL,
     title TEXT NOT NULL

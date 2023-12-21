@@ -33,12 +33,15 @@ def books():
             return jsonify(books)
 
     if request.method == 'POST':
-        new_author = request.form['author']
-        new_language = request.form['language']
-        new_title = request.form['title']
+        try:
+            new_author = request.form['author']
+            new_language = request.form['language']
+            new_title = request.form['title']
+        except:
+            return "Missing required fields", 400
 
         sql = """INSERT INTO book (author, language, title) VALUES (%s,%s,%s)"""
-        cursor = cursor.execute(sql, (new_author, new_language, new_title))
+        cursor.execute(sql, (new_author, new_language, new_title))
         conn.commit()
         return f"Book with the id: {cursor.lastrowid} created successfully"
 
