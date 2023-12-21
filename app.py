@@ -24,7 +24,7 @@ def books():
     conn = db_connection()
     cursor = conn.cursor()
     if request.method == 'GET':
-        cursor = conn.execute("SELECT * FROM book")
+        cursor.execute("SELECT * FROM book")
         books = [
             dict(id=row['id'], author=row['author'], language=row['language'], title=row['title'])
             for row in cursor.fetchall()
